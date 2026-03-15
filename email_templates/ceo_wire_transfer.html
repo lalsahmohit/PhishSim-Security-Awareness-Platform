@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Confidential - Executive Request</title>
+<style>
+  body { margin:0; padding:20px; background:#fff; font-family:Georgia,serif; color:#1a1a1a; }
+  .email-body { max-width:580px; margin:0 auto; }
+  .from-line { font-size:13px; color:#777; margin-bottom:24px; border-bottom:1px solid #eee; padding-bottom:12px; }
+  .from-line strong { color:#333; }
+  p { font-size:15px; line-height:1.8; margin:0 0 16px; }
+  .signature { margin-top:32px; border-top:2px solid #1a3a5c; padding-top:16px; }
+  .sig-name { font-size:16px; font-weight:700; color:#1a3a5c; }
+  .sig-title { font-size:13px; color:#666; }
+  .sig-logo { font-size:22px; font-weight:900; color:#1a3a5c; letter-spacing:-1px; margin-bottom:8px; }
+  .confidential { background:#fef9e7; border:1px solid #f39c12; padding:10px 14px; font-size:12px; color:#7d6608; margin-top:24px; border-radius:3px; }
+  a.link { color:#1a3a5c; font-weight:bold; }
+</style>
+</head>
+<body>
+{{TRACKING_PIXEL}}
+<div class="email-body">
+
+  <div class="from-line">
+    <strong>From:</strong> Robert Mitchell, CEO &lt;ceo@company-exec.net&gt;<br>
+    <strong>To:</strong> {{TARGET_EMAIL}}<br>
+    <strong>Subject:</strong> Urgent - Confidential Wire Transfer Request<br>
+    <strong>Date:</strong> Today, 8:42 AM
+  </div>
+
+  <p>{{TARGET_NAME}},</p>
+
+  <p>I need you to handle something for me discreetly. I'm currently in a closed-door meeting with the board and cannot speak freely, so please handle this by email only.</p>
+
+  <p>We are in the final stages of closing a confidential acquisition. The legal team requires a wire transfer of <strong>$87,500</strong> to be completed before end of business today to hold the deal. This cannot be processed through standard channels due to the sensitivity of the transaction.</p>
+
+  <p>Please process the wire to the following account:</p>
+
+  <p style="background:#f8f9fa;padding:14px 18px;border-left:3px solid #1a3a5c;font-family:monospace;font-size:14px;">
+    Bank: First Merchant Trust<br>
+    Routing: 021000021<br>
+    Account: 7734901285<br>
+    Beneficiary: Meridian Holdings LLC<br>
+    Reference: ACQ-2024-CONF
+  </p>
+
+  <p>Once the transfer is confirmed, please reply with the confirmation number. Do <u>not</u> discuss this with anyone else — the acquisition is under strict NDA. Legal will follow up next week once the deal closes.</p>
+
+  <p>I know this is unusual. I appreciate your discretion. <a href="{{CLICK_URL}}" class="link">Click here to access the secure transfer portal →</a></p>
+
+  <div class="signature">
+    <div class="sig-logo">MC</div>
+    <div class="sig-name">Robert Mitchell</div>
+    <div class="sig-title">Chief Executive Officer</div>
+    <div class="sig-title" style="margin-top:4px;color:#999;">Sent from my iPhone</div>
+  </div>
+
+  <div class="confidential">
+    🔒 CONFIDENTIAL: This email and any attachments are intended solely for the named recipient(s). Any unauthorized review, use, disclosure, or distribution is prohibited. If you received this in error, please contact the sender and destroy all copies.
+  </div>
+
+</div>
+</body>
+</html>

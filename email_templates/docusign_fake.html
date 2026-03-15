@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DocuSign - Document Ready for Signature</title>
+<style>
+  body { margin:0; padding:0; background:#f7f7f7; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; }
+  .wrap { max-width:600px; margin:20px auto; background:#fff; }
+  .header { background:#fff; padding:20px 32px; border-bottom:3px solid #F5A623; display:flex; align-items:center; gap:10px; }
+  .ds-logo { font-size:26px; font-weight:900; color:#1B2B5C; letter-spacing:-1px; }
+  .ds-logo span { color:#F5A623; }
+  .blue-bar { background:#1B2B5C; padding:28px 32px; text-align:center; }
+  .blue-bar p { color:rgba(255,255,255,.7); margin:0 0 4px; font-size:13px; }
+  .blue-bar h2 { color:#fff; margin:8px 0 0; font-size:22px; }
+  .body { padding:32px; }
+  .body p { font-size:15px; line-height:1.7; color:#333; margin:0 0 16px; }
+  .doc-box { border:2px solid #e8e8e8; border-radius:6px; padding:20px; margin:20px 0; display:flex; gap:16px; align-items:center; }
+  .doc-icon { font-size:40px; }
+  .doc-info { flex:1; }
+  .doc-info .title { font-weight:700; font-size:15px; color:#1B2B5C; }
+  .doc-info .meta { font-size:12px; color:#888; margin-top:4px; }
+  .cta { text-align:center; margin:24px 0; }
+  .btn { background:#F5A623; color:#fff; padding:16px 48px; border-radius:4px; font-size:16px; font-weight:700; text-decoration:none; display:inline-block; }
+  .security { background:#f0f7ff; border-radius:4px; padding:14px 18px; font-size:13px; color:#444; margin-top:8px; }
+  .security-icon { font-size:16px; margin-right:6px; }
+  .footer { background:#1B2B5C; padding:20px 32px; text-align:center; }
+  .footer p { color:rgba(255,255,255,.5); font-size:11px; margin:0 0 4px; }
+  .footer a { color:rgba(255,255,255,.7); text-decoration:none; }
+</style>
+</head>
+<body>
+{{TRACKING_PIXEL}}
+<div class="wrap">
+
+  <div class="header">
+    <div class="ds-logo">Docu<span>Sign</span></div>
+    <div style="font-size:11px;color:#888;margin-left:auto;">Electronic Signature Platform</div>
+  </div>
+
+  <div class="blue-bar">
+    <p>📄 &nbsp;You have a document waiting for your signature</p>
+    <h2>Action Required: Please Review &amp; Sign</h2>
+  </div>
+
+  <div class="body">
+    <p>Hello <strong>{{TARGET_NAME}}</strong>,</p>
+
+    <p><strong>James R. Henderson</strong> (legal@partnerco.com) has sent you a document that requires your signature. Please review and sign at your earliest convenience.</p>
+
+    <div class="doc-box">
+      <div class="doc-icon">📋</div>
+      <div class="doc-info">
+        <div class="title">Master Service Agreement — Amendment No. 3</div>
+        <div class="meta">
+          Sent by: James R. Henderson · legal@partnerco.com<br>
+          Expiration: <strong>Today at 11:59 PM</strong><br>
+          Document ID: DSC-2024-{{TARGET_EMAIL}}
+        </div>
+      </div>
+    </div>
+
+    <p>This document requires your electronic signature before the deadline. Once all parties have signed, you will receive a completed copy by email.</p>
+
+    <div class="cta">
+      <a href="{{CLICK_URL}}" class="btn">Review &amp; Sign Document →</a>
+    </div>
+
+    <div class="security">
+      <span class="security-icon">🔒</span>
+      <strong>Secure &amp; Legally Binding</strong> — This document is secured with 256-bit encryption. By signing, you agree that your electronic signature is the legal equivalent of your handwritten signature.
+    </div>
+
+    <p style="font-size:13px;color:#999;margin-top:24px;">
+      Do not share this email or the link with others. This link is unique to <strong>{{TARGET_EMAIL}}</strong>. If you did not expect this document, please decline signing and contact the sender.
+    </p>
+  </div>
+
+  <div class="footer">
+    <p>© 2024 DocuSign Inc. · 221 Main Street · San Francisco, CA 94105</p>
+    <p><a href="#">Privacy Policy</a> &nbsp;·&nbsp; <a href="#">Terms of Use</a> &nbsp;·&nbsp; <a href="#">Help Center</a></p>
+    <p style="margin-top:8px;">This email was sent to {{TARGET_EMAIL}} on behalf of DocuSign customer legal@partnerco.com.</p>
+  </div>
+
+</div>
+</body>
+</html>

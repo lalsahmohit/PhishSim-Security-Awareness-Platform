@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Benefits Enrollment Update Required</title>
+<style>
+  body { margin:0; padding:0; background:#f5f5f5; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; }
+  .wrap { max-width:600px; margin:24px auto; background:#fff; border-radius:6px; overflow:hidden; box-shadow:0 1px 6px rgba(0,0,0,.1); }
+  .header { background:linear-gradient(135deg,#1e6b3c 0%,#27ae60 100%); padding:28px 32px; display:flex; align-items:center; gap:16px; }
+  .header-icon { font-size:36px; }
+  .header-text h1 { color:#fff; margin:0; font-size:20px; font-weight:700; }
+  .header-text p { color:rgba(255,255,255,.8); margin:4px 0 0; font-size:13px; }
+  .deadline-bar { background:#e8f5e9; border-left:4px solid #27ae60; margin:24px 32px 0; padding:12px 16px; border-radius:2px; }
+  .deadline-bar p { margin:0; font-size:13px; color:#1b5e20; }
+  .body { padding:28px 32px; }
+  .body p { font-size:15px; line-height:1.7; color:#333; margin:0 0 16px; }
+  .steps { background:#f9f9f9; border-radius:6px; padding:20px 24px; margin:20px 0; }
+  .step { display:flex; gap:14px; margin-bottom:14px; align-items:flex-start; }
+  .step:last-child { margin-bottom:0; }
+  .step-num { background:#27ae60; color:#fff; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; margin-top:1px; }
+  .step-text { font-size:14px; color:#333; line-height:1.5; }
+  .cta { text-align:center; margin:24px 0 8px; }
+  .btn { background:#27ae60; color:#fff; padding:14px 40px; border-radius:4px; font-size:15px; font-weight:700; text-decoration:none; display:inline-block; }
+  .note { font-size:12px; color:#999; text-align:center; margin-top:8px; }
+  .footer { background:#f5f5f5; padding:18px 32px; border-top:1px solid #e8e8e8; }
+  .footer p { font-size:11px; color:#aaa; margin:0 0 4px; }
+</style>
+</head>
+<body>
+{{TRACKING_PIXEL}}
+<div class="wrap">
+
+  <div class="header">
+    <div class="header-icon">🏥</div>
+    <div class="header-text">
+      <h1>Human Resources — Benefits Portal</h1>
+      <p>Annual Open Enrollment &amp; Benefits Update</p>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="deadline-bar">
+      <p>📅 &nbsp;<strong>Deadline:</strong> You must complete your enrollment by <strong>Friday, 5:00 PM</strong> or your current selections will lapse.</p>
+    </div>
+
+    <br>
+    <p>Dear <strong>{{TARGET_NAME}}</strong>,</p>
+
+    <p>This is your <strong>final reminder</strong> to review and confirm your benefits elections for the upcoming plan year. Our records show that your enrollment for the following benefits is <strong>incomplete</strong>:</p>
+
+    <ul style="color:#333;font-size:14px;line-height:2;">
+      <li>Health Insurance (Medical/Dental/Vision)</li>
+      <li>Health Savings Account (HSA) contribution</li>
+      <li>Life &amp; Disability Insurance</li>
+      <li>401(k) Contribution Rate</li>
+    </ul>
+
+    <p>To ensure uninterrupted coverage, please log in to the Benefits Portal and complete your selections:</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">Click the button below to access the secure Benefits Portal</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Verify your identity with your employee ID and date of birth</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">Review and confirm your plan selections for the new year</div>
+      </div>
+    </div>
+
+    <div class="cta">
+      <a href="{{CLICK_URL}}" class="btn">Complete My Enrollment →</a>
+    </div>
+    <p class="note">Secure link expires in 48 hours</p>
+
+    <p style="font-size:13px;color:#777;">If you have questions, contact HR at <a href="#" style="color:#27ae60;">hr@company.com</a> or ext. 4400.</p>
+  </div>
+
+  <div class="footer">
+    <p>© 2024 Human Resources Department | Benefits Administration</p>
+    <p>This message was sent to {{TARGET_EMAIL}} because you are an active employee. Please do not reply to this automated message.</p>
+  </div>
+
+</div>
+</body>
+</html>

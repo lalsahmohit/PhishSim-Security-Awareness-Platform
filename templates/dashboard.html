@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PhishSim — Security Awareness Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & BASE ── */
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+:root {
+  --bg:       #080c14;
+  --surface:  #0d1420;
+  --surface2: #111c2d;
+  --border:   #1a2744;
+  --accent:   #3b82f6;
+  --red:      #ef4444;
+  --green:    #10b981;
+  --yellow:   #f59e0b;
+  --purple:   #8b5cf6;
+  --text:     #e2e8f0;
+  --muted:    #64748b;
+  --mono:     'JetBrains Mono', monospace;
+  --sans:     'Sora', sans-serif;
+}
+body { background:var(--bg); color:var(--text); font-family:var(--sans); min-height:100vh; display:flex; }
+
+/* ── SIDEBAR ── */
+.sidebar { width:220px; background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; flex-shrink:0; }
+.logo { padding:22px 20px; border-bottom:1px solid var(--border); }
+.logo-mark { font-family:var(--mono); font-size:20px; font-weight:700; color:#fff; letter-spacing:-1px; }
+.logo-mark span { color:var(--red); }
+.logo-sub { font-size:9px; letter-spacing:2.5px; text-transform:uppercase; color:var(--muted); margin-top:4px; }
+.nav { padding:12px 0; flex:1; }
+.nav-item { display:flex; align-items:center; gap:10px; padding:10px 20px; font-size:13px; color:var(--muted); cursor:pointer; border-left:3px solid transparent; transition:.15s; user-select:none; }
+.nav-item:hover { color:var(--text); background:rgba(255,255,255,.03); }
+.nav-item.active { color:var(--accent); border-left-color:var(--accent); background:rgba(59,130,246,.06); }
+.nav-item .icon { font-size:16px; width:20px; text-align:center; }
+.nav-section { padding:14px 20px 6px; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--border); font-family:var(--mono); }
+.sidebar-bottom { padding:16px 20px; border-top:1px solid var(--border); }
+.status-dot { display:inline-block; width:7px; height:7px; background:var(--green); border-radius:50%; margin-right:7px; box-shadow:0 0 6px var(--green); animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.status-text { font-size:11px; color:var(--muted); font-family:var(--mono); }
+
+/* ── MAIN ── */
+.main { flex:1; overflow-y:auto; display:flex; flex-direction:column; }
+.topbar { padding:16px 28px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:var(--surface); }
+.topbar-title { font-size:15px; font-weight:700; color:#fff; }
+.topbar-subtitle { font-size:12px; color:var(--muted); margin-top:2px; font-family:var(--mono); }
+.btn { padding:9px 18px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; border:none; font-family:var(--sans); transition:.15s; display:inline-flex; align-items:center; gap:7px; }
+.btn-primary { background:var(--accent); color:#fff; }
+.btn-primary:hover { background:#2563eb; }
+.btn-danger { background:var(--red); color:#fff; }
+.btn-danger:hover { background:#dc2626; }
+.btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--border); }
+.btn-ghost:hover { color:var(--text); border-color:#334155; }
+.btn-sm { padding:6px 12px; font-size:12px; }
+.btn-green { background:var(--green); color:#fff; }
+
+/* ── CONTENT ── */
+.content { padding:28px; flex:1; }
+.page { display:none; }
+.page.active { display:block; }
+
+/* ── STAT CARDS ── */
+.stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:28px; }
+.stat-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:20px; position:relative; overflow:hidden; }
+.stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+.stat-card.blue::before  { background:var(--accent); }
+.stat-card.red::before   { background:var(--red); }
+.stat-card.green::before { background:var(--green); }
+.stat-card.yellow::before{ background:var(--yellow); }
+.stat-label { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-family:var(--mono); margin-bottom:8px; }
+.stat-value { font-size:32px; font-weight:800; color:#fff; line-height:1; }
+.stat-sub { font-size:11px; color:var(--muted); margin-top:6px; }
+
+/* ── SECTION HEADER ── */
+.section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.section-title { font-size:14px; font-weight:700; color:#fff; }
+.section-subtitle { font-size:12px; color:var(--muted); margin-top:2px; }
+
+/* ── TABLE ── */
+.table-wrap { background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+table { width:100%; border-collapse:collapse; }
+thead th { padding:11px 16px; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-family:var(--mono); font-weight:500; text-align:left; border-bottom:1px solid var(--border); background:rgba(0,0,0,.2); }
+tbody tr { border-bottom:1px solid var(--border); transition:.1s; cursor:pointer; }
+tbody tr:last-child { border-bottom:none; }
+tbody tr:hover { background:rgba(255,255,255,.02); }
+tbody td { padding:12px 16px; font-size:13px; color:var(--text); }
+.badge { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; font-family:var(--mono); }
+.badge-green  { background:rgba(16,185,129,.15);  color:#6ee7b7; }
+.badge-red    { background:rgba(239,68,68,.15);    color:#fca5a5; }
+.badge-yellow { background:rgba(245,158,11,.15);   color:#fcd34d; }
+.badge-blue   { background:rgba(59,130,246,.15);   color:#93c5fd; }
+.badge-gray   { background:rgba(100,116,139,.15);  color:#94a3b8; }
+.badge-purple { background:rgba(139,92,246,.15);   color:#c4b5fd; }
+
+/* ── PROGRESS BAR ── */
+.progress { background:#1e293b; border-radius:4px; height:6px; overflow:hidden; }
+.progress-fill { height:100%; border-radius:4px; transition:.4s; }
+
+/* ── MODAL ── */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:100; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(4px); }
+.modal-overlay.open { display:flex; }
+.modal { background:var(--surface); border:1px solid var(--border); border-radius:14px; width:100%; max-width:620px; max-height:90vh; overflow-y:auto; }
+.modal-header { padding:22px 26px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.modal-title { font-size:16px; font-weight:700; color:#fff; }
+.modal-close { background:none; border:none; color:var(--muted); font-size:22px; cursor:pointer; line-height:1; }
+.modal-body { padding:26px; }
+.modal-footer { padding:18px 26px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:10px; }
+
+/* ── FORM ── */
+.form-group { margin-bottom:18px; }
+.form-label { display:block; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:7px; font-family:var(--mono); }
+.form-input { width:100%; background:#0a101a; border:1px solid var(--border); border-radius:7px; padding:10px 14px; font-size:13px; color:var(--text); font-family:var(--sans); outline:none; transition:.15s; }
+.form-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(59,130,246,.15); }
+.form-input::placeholder { color:var(--muted); }
+select.form-input option { background:var(--surface2); }
+textarea.form-input { resize:vertical; min-height:80px; }
+
+/* ── TARGETS TABLE IN MODAL ── */
+.targets-input { background:#0a101a; border:1px solid var(--border); border-radius:7px; overflow:hidden; }
+.targets-input table { width:100%; }
+.targets-input thead th { background:var(--surface2); padding:8px 12px; font-size:10px; }
+.targets-input tbody td { padding:4px 8px; }
+.targets-input .form-input { background:transparent; border:none; padding:7px 8px; }
+.targets-input .form-input:focus { background:rgba(59,130,246,.05); border:none; box-shadow:none; }
+.add-row { width:100%; background:none; border:none; border-top:1px solid var(--border); padding:10px; color:var(--muted); font-size:12px; cursor:pointer; font-family:var(--sans); }
+.add-row:hover { color:var(--accent); background:rgba(59,130,246,.03); }
+
+/* ── DETAIL VIEW ── */
+.detail-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:28px; }
+.detail-stat { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:16px; text-align:center; }
+.detail-stat-value { font-size:28px; font-weight:800; color:#fff; }
+.detail-stat-label { font-size:11px; color:var(--muted); margin-top:4px; font-family:var(--mono); letter-spacing:1px; text-transform:uppercase; }
+
+/* ── TEMPLATE CARDS ── */
+.template-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+.template-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:20px; cursor:pointer; transition:.15s; position:relative; }
+.template-card:hover { border-color:var(--accent); background:rgba(59,130,246,.04); }
+.template-card.selected { border-color:var(--accent); background:rgba(59,130,246,.08); }
+.template-name { font-size:14px; font-weight:700; color:#fff; margin-bottom:4px; }
+.template-category { font-size:11px; color:var(--muted); font-family:var(--mono); }
+.template-subject { font-size:12px; color:#94a3b8; margin-top:8px; font-style:italic; }
+.template-check { position:absolute; top:14px; right:14px; width:20px; height:20px; border-radius:50%; background:var(--accent); color:#fff; font-size:12px; display:none; align-items:center; justify-content:center; }
+.template-card.selected .template-check { display:flex; }
+
+/* ── PREVIEW IFRAME ── */
+.preview-frame { width:100%; height:400px; border:none; border-radius:8px; background:#fff; }
+
+/* ── EMPTY STATE ── */
+.empty { text-align:center; padding:60px 20px; }
+.empty-icon { font-size:48px; margin-bottom:16px; opacity:.4; }
+.empty-text { font-size:15px; color:var(--muted); }
+
+/* ── EVENTS FEED ── */
+.event-feed { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; max-height:320px; overflow-y:auto; }
+.event-item { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); }
+.event-item:last-child { border-bottom:none; }
+.event-dot { width:28px; height:28px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:13px; }
+.event-dot.sent    { background:rgba(59,130,246,.15); }
+.event-dot.opened  { background:rgba(245,158,11,.15); }
+.event-dot.clicked { background:rgba(239,68,68,.15); }
+.event-dot.reported{ background:rgba(16,185,129,.15); }
+.event-info { flex:1; }
+.event-title { font-size:13px; color:var(--text); }
+.event-meta  { font-size:11px; color:var(--muted); font-family:var(--mono); margin-top:2px; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">Phish<span>Sim</span></div>
+    <div class="logo-sub">Security Awareness Platform</div>
+  </div>
+  <div class="nav">
+    <div class="nav-section">Main</div>
+    <div class="nav-item active" onclick="showPage('dashboard')"><span class="icon">📊</span> Dashboard</div>
+    <div class="nav-item" onclick="showPage('campaigns')"><span class="icon">📧</span> Campaigns</div>
+    <div class="nav-item" onclick="showPage('templates')"><span class="icon">🎨</span> Templates</div>
+    <div class="nav-section">Tools</div>
+    <div class="nav-item" onclick="showPage('reports')"><span class="icon">📈</span> Reports</div>
+    <div class="nav-item" onclick="showPage('settings')"><span class="icon">⚙️</span> Settings</div>
+  </div>
+  <div class="sidebar-bottom">
+    <span class="status-dot"></span>
+    <span class="status-text">system online</span>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="page-title">Dashboard</div>
+      <div class="topbar-subtitle" id="page-subtitle">Security Awareness Training Overview</div>
+    </div>
+    <button class="btn btn-primary" onclick="openModal('create-campaign')">＋ New Campaign</button>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ── DASHBOARD PAGE ── -->
+    <div class="page active" id="page-dashboard">
+      <div class="stat-grid" id="stat-grid">
+        <div class="stat-card blue"><div class="stat-label">Campaigns</div><div class="stat-value" id="stat-campaigns">—</div><div class="stat-sub">Total created</div></div>
+        <div class="stat-card yellow"><div class="stat-label">Emails Sent</div><div class="stat-value" id="stat-sent">—</div><div class="stat-sub">Targets reached</div></div>
+        <div class="stat-card red"><div class="stat-label">Click Rate</div><div class="stat-value" id="stat-click-rate">—</div><div class="stat-sub">Susceptibility</div></div>
+        <div class="stat-card green"><div class="stat-label">Reported</div><div class="stat-value" id="stat-reported">—</div><div class="stat-sub">Correctly flagged</div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+        <div>
+          <div class="section-header">
+            <div><div class="section-title">Recent Campaigns</div><div class="section-subtitle">Latest phishing simulations</div></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Campaign</th><th>Status</th><th>Click Rate</th></tr></thead>
+              <tbody id="recent-campaigns-body">
+                <tr><td colspan="3" style="text-align:center;color:var(--muted);padding:28px;">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <div class="section-header"><div class="section-title">Live Event Feed</div></div>
+          <div class="event-feed" id="event-feed">
+            <div style="text-align:center;color:var(--muted);padding:32px;font-size:13px;">No events yet. Launch a campaign to see activity.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CAMPAIGNS PAGE ── -->
+    <div class="page" id="page-campaigns">
+      <div class="section-header">
+        <div><div class="section-title">All Campaigns</div><div class="section-subtitle">Manage and monitor phishing simulations</div></div>
+        <button class="btn btn-primary btn-sm" onclick="openModal('create-campaign')">＋ New Campaign</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Status</th><th>Targets</th><th>Sent</th><th>Opened</th><th>Clicked</th><th>Created</th><th></th></tr>
+          </thead>
+          <tbody id="campaigns-body">
+            <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:40px;">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── CAMPAIGN DETAIL PAGE ── -->
+    <div class="page" id="page-detail">
+      <div class="section-header">
+        <div>
+          <div class="section-title" id="detail-title">Campaign Detail</div>
+          <div class="section-subtitle" id="detail-subject"></div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-ghost btn-sm" onclick="showPage('campaigns')">← Back</button>
+          <button class="btn btn-green btn-sm" id="launch-btn">🚀 Launch Campaign</button>
+          <button class="btn btn-danger btn-sm" id="delete-btn">🗑 Delete</button>
+        </div>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-stat"><div class="detail-stat-value" id="d-sent">—</div><div class="detail-stat-label">Emails Sent</div></div>
+        <div class="detail-stat"><div class="detail-stat-value" id="d-opened">—</div><div class="detail-stat-label">Opened</div></div>
+        <div class="detail-stat"><div class="detail-stat-value" id="d-clicked">—</div><div class="detail-stat-label">Clicked</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:18px;">
+        <div>
+          <div class="section-header"><div class="section-title">Targets</div></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Name</th><th>Email</th><th>Dept</th><th>Sent</th><th>Opened</th><th>Clicked</th></tr></thead>
+              <tbody id="detail-targets-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <div class="section-header"><div class="section-title">Event Timeline</div></div>
+          <div class="event-feed" id="detail-events"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TEMPLATES PAGE ── -->
+    <div class="page" id="page-templates">
+      <div class="section-header">
+        <div><div class="section-title">Email Templates</div><div class="section-subtitle">Prebuilt phishing simulation templates</div></div>
+      </div>
+      <div class="template-grid" id="template-grid">
+        <div style="color:var(--muted);padding:40px;">Loading templates…</div>
+      </div>
+    </div>
+
+    <!-- ── REPORTS PAGE ── -->
+    <div class="page" id="page-reports">
+      <div class="section-header"><div class="section-title">Reports</div></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Campaign</th><th>Sent</th><th>Open Rate</th><th>Click Rate</th><th>Report Rate</th><th>Risk Level</th></tr></thead>
+          <tbody id="reports-body">
+            <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:40px;">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── SETTINGS PAGE ── -->
+    <div class="page" id="page-settings">
+      <div class="section-header"><div class="section-title">SMTP Settings</div></div>
+      <div class="table-wrap" style="padding:28px;max-width:520px;">
+        <div class="form-group"><label class="form-label">SMTP Host</label><input class="form-input" id="smtp-host" placeholder="smtp.gmail.com"></div>
+        <div class="form-group"><label class="form-label">Port</label><input class="form-input" id="smtp-port" placeholder="587" type="number"></div>
+        <div class="form-group"><label class="form-label">Username</label><input class="form-input" id="smtp-user" placeholder="you@example.com"></div>
+        <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="smtp-pass" type="password" placeholder="••••••••"></div>
+        <div class="form-group"><label class="form-label">Base URL (for tracking links)</label><input class="form-input" id="base-url" placeholder="http://localhost:5000" value="http://localhost:5000"></div>
+        <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ── CREATE CAMPAIGN MODAL ── -->
+<div class="modal-overlay" id="modal-create-campaign">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">New Phishing Campaign</div>
+      <button class="modal-close" onclick="closeModal('create-campaign')">×</button>
+    </div>
+    <div class="modal-body">
+      <!-- Step 1: Basic Info -->
+      <div id="step-1">
+        <div class="form-group">
+          <label class="form-label">Campaign Name</label>
+          <input class="form-input" id="new-name" placeholder="Q1 2025 Security Test">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Choose Email Template</label>
+          <div class="template-grid" id="modal-template-grid" style="margin-top:8px;"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Override Subject (optional)</label>
+          <input class="form-input" id="new-subject" placeholder="Leave blank to use template default">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Targets</label>
+          <div class="targets-input">
+            <table>
+              <thead><tr><th>Name</th><th>Email</th><th>Department</th><th></th></tr></thead>
+              <tbody id="targets-tbody">
+                <tr>
+                  <td><input class="form-input" placeholder="John Smith"></td>
+                  <td><input class="form-input" placeholder="john@example.com"></td>
+                  <td><input class="form-input" placeholder="Engineering"></td>
+                  <td><button onclick="removeTargetRow(this)" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;">✕</button></td>
+                </tr>
+              </tbody>
+            </table>
+            <button class="add-row" onclick="addTargetRow()">＋ Add Target</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('create-campaign')">Cancel</button>
+      <button class="btn btn-primary" onclick="createCampaign()">Create Campaign</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TEMPLATE PREVIEW MODAL ── -->
+<div class="modal-overlay" id="modal-preview">
+  <div class="modal" style="max-width:680px;">
+    <div class="modal-header">
+      <div class="modal-title" id="preview-title">Email Preview</div>
+      <button class="modal-close" onclick="closeModal('preview')">×</button>
+    </div>
+    <div class="modal-body">
+      <iframe class="preview-frame" id="preview-iframe" src="about:blank"></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+let campaigns = [];
+let templates = [];
+let selectedTemplate = null;
+let currentCampaign = null;
+let settings = JSON.parse(localStorage.getItem('phishsim-settings') || '{"base_url":"http://localhost:5000"}');
+
+// ── PAGES ──
+const pageConfig = {
+  dashboard: { title: 'Dashboard', subtitle: 'Security Awareness Training Overview' },
+  campaigns:  { title: 'Campaigns', subtitle: 'Manage and monitor phishing simulations' },
+  templates:  { title: 'Email Templates', subtitle: 'Prebuilt attack scenario templates' },
+  reports:    { title: 'Reports', subtitle: 'Campaign performance and risk analysis' },
+  settings:   { title: 'Settings', subtitle: 'SMTP and platform configuration' },
+  detail:     { title: 'Campaign Detail', subtitle: '' },
+};
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  const navEl = document.querySelector(`.nav-item[onclick="showPage('${name}')"]`);
+  if (navEl) navEl.classList.add('active');
+  const cfg = pageConfig[name] || {};
+  document.getElementById('page-title').textContent = cfg.title || name;
+  document.getElementById('page-subtitle').textContent = cfg.subtitle || '';
+  if (name === 'dashboard')  loadDashboard();
+  if (name === 'campaigns')  loadCampaignsPage();
+  if (name === 'templates')  renderTemplatesPage();
+  if (name === 'reports')    loadReports();
+  if (name === 'settings')   loadSettings();
+}
+
+// ── API ──
+async function api(path, method='GET', body=null) {
+  const opts = { method, headers: {'Content-Type':'application/json'} };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(path, opts);
+  return r.json();
+}
+
+// ── DASHBOARD ──
+async function loadDashboard() {
+  const [stats, camps] = await Promise.all([
+    api('/api/stats'),
+    api('/api/campaigns')
+  ]);
+  campaigns = camps;
+
+  const clickRate = stats.total_sent > 0
+    ? Math.round((stats.total_clicked / stats.total_sent) * 100) + '%'
+    : '—';
+
+  document.getElementById('stat-campaigns').textContent  = stats.total_campaigns || 0;
+  document.getElementById('stat-sent').textContent       = stats.total_sent || 0;
+  document.getElementById('stat-click-rate').textContent = clickRate;
+  document.getElementById('stat-reported').textContent   = stats.total_reported || 0;
+
+  const tbody = document.getElementById('recent-campaigns-body');
+  if (!campaigns.length) {
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:28px;">No campaigns yet</td></tr>';
+    return;
+  }
+  tbody.innerHTML = campaigns.slice(0,6).map(c => {
+    const cr = c.sent_count > 0 ? Math.round((c.clicked_count/c.sent_count)*100)+'%' : '—';
+    return `<tr onclick="viewCampaign('${c.id}')">
+      <td>${c.name}</td>
+      <td>${statusBadge(c.status)}</td>
+      <td>${cr}</td>
+    </tr>`;
+  }).join('');
+
+  // Rebuild event feed from campaigns
+  renderEventFeed(campaigns);
+}
+
+function renderEventFeed(cams) {
+  const feed = document.getElementById('event-feed');
+  const events = [];
+  cams.forEach(c => {
+    if (c.clicked_count > 0) events.push({type:'clicked', name:c.name, count:c.clicked_count});
+    if (c.opened_count > 0)  events.push({type:'opened',  name:c.name, count:c.opened_count});
+    if (c.sent_count > 0)    events.push({type:'sent',    name:c.name, count:c.sent_count});
+  });
+  if (!events.length) {
+    feed.innerHTML = '<div style="text-align:center;color:var(--muted);padding:32px;font-size:13px;">No events yet.</div>';
+    return;
+  }
+  const icons = { sent:'📨', opened:'👀', clicked:'🖱️', reported:'🚩' };
+  feed.innerHTML = events.map(e => `
+    <div class="event-item">
+      <div class="event-dot ${e.type}">${icons[e.type]||'•'}</div>
+      <div class="event-info">
+        <div class="event-title">${e.count} target(s) ${e.type} — ${e.name}</div>
+        <div class="event-meta">${e.type.toUpperCase()} EVENT</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── CAMPAIGNS PAGE ──
+async function loadCampaignsPage() {
+  campaigns = await api('/api/campaigns');
+  const tbody = document.getElementById('campaigns-body');
+  if (!campaigns.length) {
+    tbody.innerHTML = '<tr><td colspan="8"><div class="empty"><div class="empty-icon">📭</div><div class="empty-text">No campaigns. Create your first one.</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = campaigns.map(c => `
+    <tr onclick="viewCampaign('${c.id}')">
+      <td style="font-weight:600;">${c.name}</td>
+      <td>${statusBadge(c.status)}</td>
+      <td>${c.total_targets||0}</td>
+      <td>${c.sent_count||0}</td>
+      <td>${c.opened_count||0} ${pct(c.opened_count,c.sent_count)}</td>
+      <td>${c.clicked_count||0} ${pct(c.clicked_count,c.sent_count)}</td>
+      <td style="font-family:var(--mono);font-size:11px;color:var(--muted);">${fmtDate(c.created_at)}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();viewCampaign('${c.id}')">View →</button></td>
+    </tr>
+  `).join('');
+}
+
+// ── CAMPAIGN DETAIL ──
+async function viewCampaign(id) {
+  const data = await api('/api/campaigns/' + id);
+  currentCampaign = data;
+  showPage('detail');
+  document.getElementById('detail-title').textContent   = data.name;
+  document.getElementById('detail-subject').textContent = data.subject;
+  document.getElementById('d-sent').textContent    = data.targets.filter(t=>t.sent).length;
+  document.getElementById('d-opened').textContent  = data.targets.filter(t=>t.opened).length;
+  document.getElementById('d-clicked').textContent = data.targets.filter(t=>t.clicked).length;
+
+  const tbody = document.getElementById('detail-targets-body');
+  tbody.innerHTML = data.targets.map(t => `
+    <tr>
+      <td style="font-weight:600;">${t.name}</td>
+      <td style="font-family:var(--mono);font-size:11px;">${t.email}</td>
+      <td>${t.department||'—'}</td>
+      <td>${t.sent ? '✅' : '—'}</td>
+      <td>${t.opened ? '<span class="badge badge-yellow">👀 Yes</span>' : '—'}</td>
+      <td>${t.clicked ? '<span class="badge badge-red">🎣 Clicked</span>' : '—'}</td>
+    </tr>
+  `).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px;">No targets</td></tr>';
+
+  const feed = document.getElementById('detail-events');
+  const evts = data.events || [];
+  feed.innerHTML = evts.length ? evts.slice(0,20).map(e => `
+    <div class="event-item">
+      <div class="event-dot ${e.event_type}">${{sent:'📨',opened:'👀',clicked:'🖱️',reported:'🚩'}[e.event_type]||'•'}</div>
+      <div class="event-info">
+        <div class="event-title">${e.target_name} — ${e.event_type}</div>
+        <div class="event-meta">${fmtDate(e.timestamp)}</div>
+      </div>
+    </div>
+  `).join('')
+  : '<div style="text-align:center;color:var(--muted);padding:24px;font-size:13px;">No events recorded yet.</div>';
+
+  document.getElementById('launch-btn').onclick = () => launchCampaign(id);
+  document.getElementById('delete-btn').onclick = () => deleteCampaign(id);
+}
+
+async function launchCampaign(id) {
+  if (!confirm('Launch this campaign? Real emails will be sent via your SMTP settings.')) return;
+  if (!settings.smtp_host || !settings.smtp_user || !settings.smtp_pass) {
+    alert('⚠️ SMTP not configured. Go to Settings and fill in your SMTP credentials first.');
+    return;
+  }
+  const result = await api('/api/campaigns/' + id + '/launch', 'POST', {
+    base_url: settings.base_url || 'http://localhost:5000',
+    use_smtp: true,
+    smtp: {
+      host:     settings.smtp_host,
+      port:     settings.smtp_port || 587,
+      username: settings.smtp_user,
+      password: settings.smtp_pass
+    }
+  });
+  if (result.errors && result.errors.length) {
+    alert(`⚠️ Sent: ${result.sent}, Failed: ${result.errors.length}\n${result.errors.map(e => e.email + ': ' + e.error).join('\n')}`);
+  } else {
+    alert(`✅ Campaign launched! Emails sent: ${result.sent}`);
+  }
+  viewCampaign(id);
+}
+
+async function deleteCampaign(id) {
+  if (!confirm('Delete this campaign and all its data?')) return;
+  await api('/api/campaigns/' + id, 'DELETE');
+  showPage('campaigns');
+}
+
+// ── TEMPLATES PAGE ──
+async function renderTemplatesPage() {
+  if (!templates.length) templates = await api('/api/templates');
+  const grid = document.getElementById('template-grid');
+  grid.innerHTML = templates.map(t => `
+    <div class="template-card" onclick="previewTemplate('${t.id}','${escQ(t.name)}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div class="template-name">${t.name}</div>
+          <div class="template-category">${t.category}</div>
+        </div>
+        ${diffBadge(t.difficulty)}
+      </div>
+      <div class="template-subject">"${t.subject}"</div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:12px;" onclick="event.stopPropagation();previewTemplate('${t.id}','${escQ(t.name)}')">Preview Email →</button>
+    </div>
+  `).join('');
+}
+
+function previewTemplate(id, name) {
+  document.getElementById('preview-title').textContent = name + ' — Preview';
+  document.getElementById('preview-iframe').src = '/api/templates/' + id + '/preview';
+  openModal('preview');
+}
+
+// ── CREATE CAMPAIGN MODAL ──
+async function openModal(name) {
+  document.getElementById('modal-' + name).classList.add('open');
+  if (name === 'create-campaign') {
+    if (!templates.length) templates = await api('/api/templates');
+    renderModalTemplates();
+  }
+}
+function closeModal(name) {
+  document.getElementById('modal-' + name).classList.remove('open');
+}
+
+function renderModalTemplates() {
+  const grid = document.getElementById('modal-template-grid');
+  grid.innerHTML = templates.map(t => `
+    <div class="template-card" id="mtmpl-${t.id}" onclick="selectTemplate('${t.id}')">
+      <div class="template-check">✓</div>
+      <div class="template-name" style="font-size:13px;">${t.name}</div>
+      <div class="template-category" style="font-size:10px;">${t.category} · ${t.difficulty}</div>
+      <div class="template-subject" style="font-size:11px;">"${t.subject}"</div>
+    </div>
+  `).join('');
+}
+
+function selectTemplate(id) {
+  selectedTemplate = id;
+  document.querySelectorAll('#modal-template-grid .template-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('mtmpl-' + id)?.classList.add('selected');
+}
+
+function addTargetRow() {
+  const tbody = document.getElementById('targets-tbody');
+  const row = document.createElement('tr');
+  row.innerHTML = `
+    <td><input class="form-input" placeholder="Jane Doe"></td>
+    <td><input class="form-input" placeholder="jane@example.com"></td>
+    <td><input class="form-input" placeholder="Marketing"></td>
+    <td><button onclick="removeTargetRow(this)" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;">✕</button></td>
+  `;
+  tbody.appendChild(row);
+}
+
+function removeTargetRow(btn) {
+  const tbody = document.getElementById('targets-tbody');
+  if (tbody.rows.length > 1) btn.closest('tr').remove();
+}
+
+async function createCampaign() {
+  const name = document.getElementById('new-name').value.trim();
+  const subject = document.getElementById('new-subject').value.trim();
+  if (!name) { alert('Please enter a campaign name.'); return; }
+  if (!selectedTemplate) { alert('Please select a template.'); return; }
+
+  const targets = [];
+  document.querySelectorAll('#targets-tbody tr').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const n = inputs[0].value.trim(), e = inputs[1].value.trim(), d = inputs[2].value.trim();
+    if (n && e) targets.push({name:n, email:e, department:d});
+  });
+  if (!targets.length) { alert('Please add at least one target.'); return; }
+
+  const result = await api('/api/campaigns', 'POST', {
+    name, template_id: selectedTemplate, subject: subject||undefined, targets
+  });
+  closeModal('create-campaign');
+  selectedTemplate = null;
+  document.getElementById('new-name').value = '';
+  document.getElementById('new-subject').value = '';
+  loadCampaignsPage();
+  showPage('campaigns');
+}
+
+// ── REPORTS ──
+async function loadReports() {
+  campaigns = await api('/api/campaigns');
+  const tbody = document.getElementById('reports-body');
+  if (!campaigns.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:40px;">No data</td></tr>';
+    return;
+  }
+  tbody.innerHTML = campaigns.map(c => {
+    const sent    = c.sent_count || 0;
+    const openPct = sent ? Math.round((c.opened_count/sent)*100) : 0;
+    const clkPct  = sent ? Math.round((c.clicked_count/sent)*100) : 0;
+    const repPct  = sent ? Math.round((c.reported_count/sent)*100) : 0;
+    const risk = clkPct > 30 ? 'badge-red' : clkPct > 15 ? 'badge-yellow' : 'badge-green';
+    const riskLabel = clkPct > 30 ? 'High' : clkPct > 15 ? 'Medium' : 'Low';
+    return `<tr>
+      <td style="font-weight:600;">${c.name}</td>
+      <td>${sent}</td>
+      <td>${openPct}%</td>
+      <td>${clkPct}%</td>
+      <td>${repPct}%</td>
+      <td><span class="badge ${risk}">${riskLabel}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── SETTINGS ──
+function loadSettings() {
+  document.getElementById('smtp-host').value  = settings.smtp_host||'';
+  document.getElementById('smtp-port').value  = settings.smtp_port||587;
+  document.getElementById('smtp-user').value  = settings.smtp_user||'';
+  document.getElementById('smtp-pass').value  = settings.smtp_pass||'';
+  document.getElementById('base-url').value   = settings.base_url||'http://localhost:5000';
+}
+function saveSettings() {
+  settings = {
+    smtp_host: document.getElementById('smtp-host').value,
+    smtp_port: parseInt(document.getElementById('smtp-port').value)||587,
+    smtp_user: document.getElementById('smtp-user').value,
+    smtp_pass: document.getElementById('smtp-pass').value,
+    base_url:  document.getElementById('base-url').value,
+  };
+  localStorage.setItem('phishsim-settings', JSON.stringify(settings));
+  alert('Settings saved!');
+}
+
+// ── HELPERS ──
+function statusBadge(s) {
+  const map = { draft:'badge-gray', active:'badge-green', completed:'badge-blue', paused:'badge-yellow' };
+  return `<span class="badge ${map[s]||'badge-gray'}">${s}</span>`;
+}
+function diffBadge(d) {
+  const map = { Easy:'badge-green', Medium:'badge-yellow', Hard:'badge-red' };
+  return `<span class="badge ${map[d]||'badge-gray'}" style="font-size:10px;">${d}</span>`;
+}
+function pct(a, b) {
+  if (!b || !a) return '';
+  return `<span style="font-size:11px;color:var(--muted);">(${Math.round(a/b*100)}%)</span>`;
+}
+function fmtDate(s) {
+  if (!s) return '—';
+  return new Date(s).toLocaleDateString('en-US', {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+function escQ(s) { return s.replace(/'/g,"\\'"); }
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target===o) o.classList.remove('open'); });
+});
+
+// ── INIT ──
+loadDashboard();
+</script>
+</body>
+</html>

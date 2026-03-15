@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Security Awareness Training</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Sora:wght@400;600;700;800&display=swap');
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#0a0e17; color:#e0e8f0; font-family:'Sora',sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+  .card { background:#111827; border:1px solid #1e293b; border-radius:16px; max-width:560px; width:100%; overflow:hidden; }
+  .top-bar { background:#ef4444; padding:12px 28px; display:flex; align-items:center; gap:10px; }
+  .top-bar span { font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; color:#fff; letter-spacing:1px; }
+  .body { padding:40px 36px; }
+  .icon-ring { width:72px; height:72px; border-radius:50%; background:rgba(239,68,68,.15); border:2px solid rgba(239,68,68,.3); display:flex; align-items:center; justify-content:center; font-size:36px; margin:0 auto 24px; }
+  h1 { font-size:26px; font-weight:800; text-align:center; color:#f1f5f9; margin-bottom:10px; }
+  .subtitle { text-align:center; color:#94a3b8; font-size:15px; margin-bottom:32px; line-height:1.6; }
+  .what-happened { background:#0f172a; border:1px solid #1e293b; border-radius:10px; padding:20px 24px; margin-bottom:24px; }
+  .what-happened h3 { font-size:13px; font-family:'JetBrains Mono',monospace; color:#64748b; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:12px; }
+  .what-happened p { font-size:14px; color:#cbd5e1; line-height:1.7; }
+  .red-flags { margin-bottom:28px; }
+  .red-flags h3 { font-size:13px; font-family:'JetBrains Mono',monospace; color:#64748b; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:14px; }
+  .flag { display:flex; gap:12px; align-items:flex-start; margin-bottom:12px; }
+  .flag-dot { width:8px; height:8px; background:#ef4444; border-radius:50%; margin-top:6px; flex-shrink:0; }
+  .flag-text { font-size:14px; color:#cbd5e1; line-height:1.6; }
+  .flag-text strong { color:#f8fafc; }
+  .tip-box { background:rgba(16,185,129,.08); border:1px solid rgba(16,185,129,.2); border-radius:10px; padding:18px 22px; margin-bottom:28px; }
+  .tip-box p { font-size:14px; color:#a7f3d0; line-height:1.7; }
+  .tip-box p strong { color:#6ee7b7; }
+  .actions { display:flex; gap:12px; }
+  .btn { flex:1; padding:13px; border-radius:8px; font-size:14px; font-weight:700; text-align:center; cursor:pointer; border:none; font-family:'Sora',sans-serif; text-decoration:none; display:block; }
+  .btn-primary { background:#ef4444; color:#fff; }
+  .btn-secondary { background:#1e293b; color:#94a3b8; border:1px solid #334155; }
+  .footer-note { text-align:center; font-size:12px; color:#475569; margin-top:20px; font-family:'JetBrains Mono',monospace; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="top-bar">
+    <span>⚠</span>
+    <span>PHISHING SIMULATION — SECURITY AWARENESS TRAINING</span>
+  </div>
+  <div class="body">
+    <div class="icon-ring">🎣</div>
+    <h1>You Clicked a Simulated Phishing Link</h1>
+    <p class="subtitle">This was a <strong>controlled security test</strong> conducted by your organization. No data was captured. This is a learning opportunity.</p>
+
+    <div class="what-happened">
+      <h3>What Just Happened</h3>
+      <p>You received a simulated phishing email designed to look like a legitimate message. You clicked a link in that email, which in a real attack could have led to credential theft, malware installation, or financial fraud.</p>
+    </div>
+
+    <div class="red-flags">
+      <h3>Red Flags to Watch For</h3>
+      <div class="flag"><div class="flag-dot"></div><div class="flag-text"><strong>Sender domain mismatch</strong> — Check that the "From" email matches the real company domain exactly.</div></div>
+      <div class="flag"><div class="flag-dot"></div><div class="flag-text"><strong>Urgency &amp; pressure</strong> — Phrases like "immediate action required" or tight deadlines are classic manipulation tactics.</div></div>
+      <div class="flag"><div class="flag-dot"></div><div class="flag-text"><strong>Unexpected requests</strong> — Unusual wire transfers, password resets, or benefit updates out of the blue should raise suspicion.</div></div>
+      <div class="flag"><div class="flag-dot"></div><div class="flag-text"><strong>Hover before you click</strong> — Hovering over links reveals the real destination URL before you commit.</div></div>
+    </div>
+
+    <div class="tip-box">
+      <p>✅ &nbsp;<strong>Next time:</strong> When in doubt, verify through a separate channel — call the sender directly using a known number, or forward the email to your IT/security team before clicking anything.</p>
+    </div>
+
+    <div class="actions">
+      <a href="/" class="btn btn-primary">Report This Email</a>
+      <a href="#" class="btn btn-secondary">Learn More →</a>
+    </div>
+
+    <p class="footer-note">// awareness training · no real data was collected</p>
+  </div>
+</div>
+</body>
+</html>
